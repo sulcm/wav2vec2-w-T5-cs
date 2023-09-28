@@ -23,7 +23,7 @@ import os
 import sys
 import warnings
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Optional, List
 
 import datasets
 import evaluate
@@ -37,11 +37,11 @@ from transformers import (
     AutoTokenizer,
     DataCollatorForSeq2Seq,
     HfArgumentParser,
-    M2M100Tokenizer,
-    MBart50Tokenizer,
-    MBart50TokenizerFast,
-    MBartTokenizer,
-    MBartTokenizerFast,
+    # M2M100Tokenizer,
+    # MBart50Tokenizer,
+    # MBart50TokenizerFast,
+    # MBartTokenizer,
+    # MBartTokenizerFast,
     Seq2SeqTrainer,
     Seq2SeqTrainingArguments,
     default_data_collator,
@@ -59,9 +59,12 @@ require_version("datasets>=1.8.0", "To fix: pip install -r examples/pytorch/tran
 
 logger = logging.getLogger(__name__)
 
+# TODO
 # A list of all multilingual tokenizer which require src_lang and tgt_lang attributes.
-MULTILINGUAL_TOKENIZERS = [MBartTokenizer, MBartTokenizerFast, MBart50Tokenizer, MBart50TokenizerFast, M2M100Tokenizer]
+# MULTILINGUAL_TOKENIZERS = [MBartTokenizer, MBartTokenizerFast, MBart50Tokenizer, MBart50TokenizerFast, M2M100Tokenizer]
 
+def list_field(default=None, metadata=None):
+    return field(default_factory=lambda: default, metadata=metadata)
 
 @dataclass
 class ModelArguments:
@@ -123,9 +126,13 @@ class DataTrainingArguments:
     Arguments pertaining to what data we are going to input our model for training and eval.
     """
 
-    source_lang: str = field(default=None, metadata={"help": "Source language id for translation."})
-    target_lang: str = field(default=None, metadata={"help": "Target language id for translation."})
-
+    # source_lang: str = field(default=None, metadata={"help": "Source language id for translation."})
+    # target_lang: str = field(default=None, metadata={"help": "Target language id for translation."})
+    # TODO
+    eval_metrics: Optional[List[str]] = list_field(
+        default=["wer"],
+        metadata={"help": "A list of metrics the model should be evaluated on. E.g. `'wer cer'`"},
+    )
     dataset_name: Optional[str] = field(
         default=None, metadata={"help": "The name of the dataset to use (via the datasets library)."}
     )
@@ -246,10 +253,11 @@ class DataTrainingArguments:
     )
 
     def __post_init__(self):
+        # TODO
         if self.dataset_name is None and self.train_file is None and self.validation_file is None:
             raise ValueError("Need either a dataset name or a training/validation file.")
-        elif self.source_lang is None or self.target_lang is None:
-            raise ValueError("Need to specify the source language and the target language.")
+        # elif self.source_lang is None or self.target_lang is None:
+        #     raise ValueError("Need to specify the source language and the target language.")
 
         # accepting both json and jsonl file extensions, as
         # many jsonlines files actually have a .json extension
@@ -286,6 +294,7 @@ def main():
 
     # Sending telemetry. Tracking the example usage helps us better allocate resources to maintain them. The
     # information sent is the one passed as arguments along with your Python/PyTorch versions.
+    # TODO
     send_example_telemetry("run_seq2seq", model_args, data_args)
 
     # Setup logging
@@ -312,7 +321,7 @@ def main():
         + f"distributed training: {training_args.parallel_mode.value == 'distributed'}, 16-bits training: {training_args.fp16}"
     )
     logger.info(f"Training/evaluation parameters {training_args}")
-
+    # TODO
     if data_args.source_prefix is None and model_args.model_name_or_path in [
         "t5-small",
         "t5-base",
@@ -416,12 +425,13 @@ def main():
     if len(tokenizer) > embedding_size:
         model.resize_token_embeddings(len(tokenizer))
 
+    # TODO
     # Set decoder_start_token_id
-    if model.config.decoder_start_token_id is None and isinstance(tokenizer, (MBartTokenizer, MBartTokenizerFast)):
-        if isinstance(tokenizer, MBartTokenizer):
-            model.config.decoder_start_token_id = tokenizer.lang_code_to_id[data_args.target_lang]
-        else:
-            model.config.decoder_start_token_id = tokenizer.convert_tokens_to_ids(data_args.target_lang)
+    # if model.config.decoder_start_token_id is None and isinstance(tokenizer, (MBartTokenizer, MBartTokenizerFast)):
+    #     if isinstance(tokenizer, MBartTokenizer):
+    #         model.config.decoder_start_token_id = tokenizer.lang_code_to_id[data_args.target_lang]
+    #     else:
+    #         model.config.decoder_start_token_id = tokenizer.convert_tokens_to_ids(data_args.target_lang)
 
     if model.config.decoder_start_token_id is None:
         raise ValueError("Make sure that `config.decoder_start_token_id` is correctly defined")
@@ -440,27 +450,28 @@ def main():
         logger.info("There is nothing to do. Please pass `do_train`, `do_eval` and/or `do_predict`.")
         return
 
+    # TODO
     # For translation we set the codes of our source and target languages (only useful for mBART, the others will
     # ignore those attributes).
-    if isinstance(tokenizer, tuple(MULTILINGUAL_TOKENIZERS)):
-        assert data_args.target_lang is not None and data_args.source_lang is not None, (
-            f"{tokenizer.__class__.__name__} is a multilingual tokenizer which requires --source_lang and "
-            "--target_lang arguments."
-        )
+    # if isinstance(tokenizer, tuple(MULTILINGUAL_TOKENIZERS)):
+    #     assert data_args.target_lang is not None and data_args.source_lang is not None, (
+    #         f"{tokenizer.__class__.__name__} is a multilingual tokenizer which requires --source_lang and "
+    #         "--target_lang arguments."
+    #     )
 
-        tokenizer.src_lang = data_args.source_lang
-        tokenizer.tgt_lang = data_args.target_lang
+    #     tokenizer.src_lang = data_args.source_lang
+    #     tokenizer.tgt_lang = data_args.target_lang
 
-        # For multilingual translation models like mBART-50 and M2M100 we need to force the target language token
-        # as the first generated token. We ask the user to explicitly provide this as --forced_bos_token argument.
-        forced_bos_token_id = (
-            tokenizer.lang_code_to_id[data_args.forced_bos_token] if data_args.forced_bos_token is not None else None
-        )
-        model.config.forced_bos_token_id = forced_bos_token_id
+    #     # For multilingual translation models like mBART-50 and M2M100 we need to force the target language token
+    #     # as the first generated token. We ask the user to explicitly provide this as --forced_bos_token argument.
+    #     forced_bos_token_id = (
+    #         tokenizer.lang_code_to_id[data_args.forced_bos_token] if data_args.forced_bos_token is not None else None
+    #     )
+    #     model.config.forced_bos_token_id = forced_bos_token_id
 
     # Get the language codes for input/target.
-    source_lang = data_args.source_lang.split("_")[0]
-    target_lang = data_args.target_lang.split("_")[0]
+    # source_lang = data_args.source_lang.split("_")[0]
+    # target_lang = data_args.target_lang.split("_")[0]
 
     # Temporarily set max_target_length for training.
     max_target_length = data_args.max_target_length
@@ -472,9 +483,10 @@ def main():
             f"`{model.__class__.__name__}`. This will lead to loss being calculated twice and will take up more memory"
         )
 
+    # TODO
     def preprocess_function(examples):
-        inputs = [ex[source_lang] for ex in examples["translation"]]
-        targets = [ex[target_lang] for ex in examples["translation"]]
+        inputs = [ex for ex in examples["incorrect_input"]]
+        targets = [ex for ex in examples["correct_output"]]
         inputs = [prefix + inp for inp in inputs]
         model_inputs = tokenizer(inputs, max_length=data_args.max_source_length, padding=padding, truncation=True)
 
@@ -557,6 +569,8 @@ def main():
         )
 
     # Metric
+    # TODO
+    # eval_metrics = {metric: evaluate.load(metric) for metric in data_args.eval_metrics}
     metric = evaluate.load("sacrebleu")
 
     def postprocess_text(preds, labels):
@@ -578,8 +592,10 @@ def main():
         # Some simple post-processing
         decoded_preds, decoded_labels = postprocess_text(decoded_preds, decoded_labels)
 
+        # TODO
         result = metric.compute(predictions=decoded_preds, references=decoded_labels)
         result = {"bleu": result["score"]}
+        # result = {k: v.compute(predictions=decoded_preds, references=decoded_labels) for k, v in eval_metrics.items()}
 
         prediction_lens = [np.count_nonzero(pred != tokenizer.pad_token_id) for pred in preds]
         result["gen_len"] = np.mean(prediction_lens)
@@ -662,7 +678,9 @@ def main():
                 with open(output_prediction_file, "w", encoding="utf-8") as writer:
                     writer.write("\n".join(predictions))
 
-    kwargs = {"finetuned_from": model_args.model_name_or_path, "tasks": "translation"}
+    # TODO
+    # kwargs = {"finetuned_from": model_args.model_name_or_path, "tasks": "translation"}
+    kwargs = {"finetuned_from": model_args.model_name_or_path, "tasks": "grammar-correction"}
     if data_args.dataset_name is not None:
         kwargs["dataset_tags"] = data_args.dataset_name
         if data_args.dataset_config_name is not None:
@@ -671,9 +689,10 @@ def main():
         else:
             kwargs["dataset"] = data_args.dataset_name
 
-    languages = [l for l in [data_args.source_lang, data_args.target_lang] if l is not None]
-    if len(languages) > 0:
-        kwargs["language"] = languages
+    # TODO
+    # languages = [l for l in [data_args.source_lang, data_args.target_lang] if l is not None]
+    # if len(languages) > 0:
+    #     kwargs["language"] = languages
 
     if training_args.push_to_hub:
         trainer.push_to_hub(**kwargs)
