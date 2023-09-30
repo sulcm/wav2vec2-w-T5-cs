@@ -485,6 +485,8 @@ def main():
 
     # TODO
     def preprocess_function(examples):
+        # inputs = [ex[source_lang] for ex in examples["translation"]]
+        # targets = [ex[target_lang] for ex in examples["translation"]]
         inputs = [ex for ex in examples["incorrect_input"]]
         targets = [ex for ex in examples["correct_output"]]
         inputs = [prefix + inp for inp in inputs]
