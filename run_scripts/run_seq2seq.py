@@ -572,8 +572,8 @@ def main():
 
     # Metric
     # TODO
-    # eval_metrics = {metric: evaluate.load(metric) for metric in data_args.eval_metrics}
-    metric = evaluate.load("sacrebleu")
+    eval_metrics = {metric: evaluate.load(metric) for metric in data_args.eval_metrics}
+    # metric = evaluate.load("sacrebleu")
 
     def postprocess_text(preds, labels):
         preds = [pred.strip() for pred in preds]
@@ -595,9 +595,9 @@ def main():
         decoded_preds, decoded_labels = postprocess_text(decoded_preds, decoded_labels)
 
         # TODO
-        result = metric.compute(predictions=decoded_preds, references=decoded_labels)
-        result = {"bleu": result["score"]}
-        # result = {k: v.compute(predictions=decoded_preds, references=decoded_labels) for k, v in eval_metrics.items()}
+        # result = metric.compute(predictions=decoded_preds, references=decoded_labels)
+        # result = {"bleu": result["score"]}
+        result = {metric_name: metric.compute(predictions=decoded_preds, references=decoded_labels) for metric_name, metric in eval_metrics.items()}
 
         prediction_lens = [np.count_nonzero(pred != tokenizer.pad_token_id) for pred in preds]
         result["gen_len"] = np.mean(prediction_lens)
