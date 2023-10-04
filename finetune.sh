@@ -1,25 +1,22 @@
-
-pip install transformers==4.21.2 datasets==1.18.0 librosa jiwer evaluate numpy==1.22
-
 python run_speech_recognition_ctc.py \
-	--dataset_name="common_voice" \
-	--model_name_or_path="fav-kky/wav2vec2-base-cs-80k-ClTRUS" \
+	--dataset_name="common_voice" \ # provide dataset (match --dataset_config_name, --text_column_name)
+	--model_name_or_path="/storage/plzen4-ntis/projects/public/Lehecka/wav2vec2-base-cs-80k" \ # base model
 	--dataset_config_name="cs" \
-	--output_dir="/storage/plzen4-ntis/home/sulc.././wav2vec2-common_voice-cs" \
+	--output_dir="/storage/plzen4-ntis/home/sulcm01/outputs/*" \ # replace * with dir
 	--overwrite_output_dir \
-	--max_steps="10000" \
+	--max_steps="10000" \ # number of batches to train on
 	--gradient_accumulation_steps="2" \
-	--per_device_train_batch_size="4" \
-	--learning_rate="3e-4" \
-	--warmup_steps="500" \
+	--per_device_train_batch_size="4" \ # move accordingly to GPU util and memory
+	--learning_rate="3e-4" \ # hmmm
+	--warmup_steps="500" \ # hmmm
 	--evaluation_strategy="steps" \
-	--text_column_name="sentence" \
+	--text_column_name="sentence" \ # check for sure
 	--length_column_name="input_length" \
 	--save_steps="500" \
 	--eval_steps="500" \
 	--logging_steps="10" \
-	--layerdrop="0.0" \
-	--save_total_limit="3" \
+	--layerdrop="0.0" \ # hmmm
+	--save_total_limit="2" \
 	--freeze_feature_encoder \
 	--gradient_checkpointing \
 	--chars_to_ignore , ? . ! - \; \: \" “ % ‘ ” � \
