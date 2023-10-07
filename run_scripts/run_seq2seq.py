@@ -295,7 +295,7 @@ def main():
     # Sending telemetry. Tracking the example usage helps us better allocate resources to maintain them. The
     # information sent is the one passed as arguments along with your Python/PyTorch versions.
     # TODO
-    send_example_telemetry("run_seq2seq", model_args, data_args)
+    # send_example_telemetry("run_seq2seq", model_args, data_args)
 
     # Setup logging
     logging.basicConfig(
@@ -595,6 +595,7 @@ def main():
         decoded_preds, decoded_labels = postprocess_text(decoded_preds, decoded_labels)
 
         # TODO
+        # check if "decoded_preds" or "decoded_labels" include --source_prefix, if sou remove it before metric compute
         # result = metric.compute(predictions=decoded_preds, references=decoded_labels)
         # result = {"bleu": result["score"]}
         result = {metric_name: metric.compute(predictions=decoded_preds, references=decoded_labels) for metric_name, metric in eval_metrics.items()}

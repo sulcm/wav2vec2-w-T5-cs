@@ -12,7 +12,8 @@ python run_speech_recognition_ctc.py \
 	--eval_metrics="wer" \
 	--evaluation_strategy="steps" \
 	--max_steps="10000" \
-	--learning_rate="3e-4" \
+	--learning_rate="1e-4" \
+	--weight_decay="0.005" \
 	--warmup_steps="500" \
 	--layerdrop="0.0" \
 	--chars_to_ignore , ? . ! - \; \: \" “ % ‘ ” � \
@@ -22,9 +23,9 @@ python run_speech_recognition_ctc.py \
 	--do_train \
 	--do_eval \
 	--gradient_accumulation_steps="2" \
-	--per_device_train_batch_size="4" \
+	--per_device_train_batch_size="8" \
 	--save_steps="500" \
-	--eval_steps="500" \
+	--eval_steps="100" \
 	--logging_steps="10" \
 	--save_total_limit="2" \
 	--gradient_checkpointing
