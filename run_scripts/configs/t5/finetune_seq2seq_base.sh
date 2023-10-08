@@ -1,6 +1,6 @@
 python run_seq2seq.py \
 	--model_name_or_path="" \
-	--output_dir="" \
+	--output_dir="/storage/plzen4-ntis/home/sulcm01/outputs//" \
 	--overwrite_output_dir \
 	--dataset_name="" \
 	--length_column_name="input_length" \
@@ -8,8 +8,7 @@ python run_seq2seq.py \
     --source_prefix="grammar: " \
 	--evaluation_strategy="steps" \
 	--max_steps="10000" \
-	--learning_rate="1e-4" \
-    --weight_decay="0.005" \
+	--learning_rate="3e-4" \
 	--warmup_steps="500" \
 	--fp16 \
 	--group_by_length \

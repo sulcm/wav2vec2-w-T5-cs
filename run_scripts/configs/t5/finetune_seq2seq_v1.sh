@@ -1,0 +1,24 @@
+python run_seq2seq.py \
+	--model_name_or_path="" \
+	--output_dir="/storage/plzen4-ntis/home/sulcm01/outputs//" \
+	--overwrite_output_dir \
+	--dataset_name="" \
+	--length_column_name="input_length" \
+	--eval_metrics="wer" \
+    --source_prefix="grammar: " \
+	--evaluation_strategy="steps" \
+	--max_steps="10000" \
+	--learning_rate="1e-4" \
+    --weight_decay="0.005" \
+	--warmup_steps="500" \
+	--fp16 \
+	--group_by_length \
+	--do_train \
+	--do_eval \
+	--gradient_accumulation_steps="2" \
+	--per_device_train_batch_size="8" \
+	--save_steps="500" \
+	--eval_steps="100" \
+	--logging_steps="10" \
+	--save_total_limit="2" \
+	--gradient_checkpointing
