@@ -1,6 +1,6 @@
 python run_speech_recognition_ctc.py \
-	--model_name_or_path="/storage/plzen4-ntis/projects/public/Lehecka/wav2vec2-base-cs-80k" \
-	--output_dir="/storage/plzen4-ntis/home/sulcm01/outputs//" \
+	--model_name_or_path="/home/sulcm/.cache/models/wav2vec2/wav2vec2-base-cs-80k" \
+	--output_dir="/home/sulcm/.cache/models/wav2vec2/wav2vec2-cs-v1/" \
 	--overwrite_output_dir \
 	--dataset_name="mozilla-foundation/common_voice_11_0" \
 	--dataset_config_name="cs" \
