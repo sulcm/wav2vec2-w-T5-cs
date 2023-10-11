@@ -1,21 +1,20 @@
 python run_speech_recognition_ctc.py \
 	--model_name_or_path="/home/sulcm/.cache/models/wav2vec2/wav2vec2-base-cs-80k" \
-	--output_dir="/home/sulcm/.cache/models/wav2vec2/wav2vec2-cs-v1/" \
+	--output_dir="/home/sulcm/.cache/models/wav2vec2/wav2vec2-cs-test/" \
 	--overwrite_output_dir \
 	--dataset_name="mozilla-foundation/common_voice_11_0" \
 	--dataset_config_name="cs" \
 	--text_column_name="sentence" \
 	--audio_column_name="audio" \
-	--train_split_name="train+validation" \
+	--train_split_name="validation" \
 	--eval_split_name="test" \
 	--length_column_name="input_length" \
 	--eval_metrics="wer" \
 	--evaluation_strategy="steps" \
 	--max_steps="10000" \
-	--learning_rate="1e-4" \
-	--weight_decay="0.005" \
+	--learning_rate="3e-4" \
 	--warmup_steps="500" \
-	--layerdrop="0.0" \
+	--layerdrop="0.01" \
 	--chars_to_ignore , ? . ! - \; \: \" “ % ‘ ” � \
 	--freeze_feature_encoder \
 	--fp16 \

@@ -21,10 +21,13 @@ python run_speech_recognition_ctc.py \
 	--group_by_length \
 	--do_train \
 	--do_eval \
+	--load_best_model_at_end=True \
+	--metric_for_best_model="wer" \
+	--greater_is_better=False \
 	--gradient_accumulation_steps="2" \
 	--per_device_train_batch_size="8" \
 	--save_steps="500" \
-	--eval_steps="100" \
+	--eval_steps="500" \
 	--logging_steps="10" \
 	--save_total_limit="2" \
 	--gradient_checkpointing
