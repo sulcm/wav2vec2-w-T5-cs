@@ -8,17 +8,17 @@ python run_speech_recognition_ctc.py \
 	--audio_column_name="audio" \
 	--train_split_name="train+validation" \
 	--eval_split_name="test" \
-	--length_column_name="input_length" \
 	--eval_metrics="wer" \
 	--evaluation_strategy="steps" \
 	--max_steps="10000" \
 	--learning_rate="3e-4" \
 	--warmup_steps="500" \
 	--layerdrop="0.0" \
-	--chars_to_ignore , ? . ! - \; \: \" “ % ‘ ” � \
+	--chars_to_ignore , ? . ! - — – \; \: \" “ % ‘ „ ” � … \
 	--freeze_feature_encoder \
 	--fp16 \
 	--group_by_length \
+	--length_column_name="input_length" \
 	--do_train \
 	--do_eval \
 	--load_best_model_at_end=True \

@@ -30,7 +30,7 @@ import datasets
 import evaluate
 import numpy as np
 import torch
-from datasets import DatasetDict, load_dataset
+from datasets import DatasetDict, load_dataset, Audio
 
 import transformers
 from transformers import (
@@ -624,7 +624,7 @@ def main():
     dataset_sampling_rate = next(iter(raw_datasets.values())).features[data_args.audio_column_name].sampling_rate
     if dataset_sampling_rate != feature_extractor.sampling_rate:
         raw_datasets = raw_datasets.cast_column(
-            data_args.audio_column_name, datasets.features.Audio(sampling_rate=feature_extractor.sampling_rate)
+            data_args.audio_column_name, Audio(sampling_rate=feature_extractor.sampling_rate)
         )
 
     # derive max & min input length for sample rate & max duration
