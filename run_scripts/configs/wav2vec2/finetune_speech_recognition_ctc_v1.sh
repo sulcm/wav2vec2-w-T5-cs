@@ -10,11 +10,14 @@ python run_speech_recognition_ctc.py \
 	--eval_split_name="test" \
 	--eval_metrics wer cer \
 	--evaluation_strategy="steps" \
-	--max_steps="10000" \
-	--learning_rate="1e-4" \
-	--weight_decay="0.005" \
-	--warmup_steps="500" \
+	--max_steps="20000" \
+	--learning_rate="3e-4" \
+	--warmup_steps="1000" \
 	--layerdrop="0.0" \
+	--mask_time_prob="0.3" \
+	--mask_time_length="10" \
+	--mask_feature_prob="0.1" \
+	--mask_feature_length="64" \
 	--chars_to_ignore , ? . ! - \; \: \" “ % ‘ ” � \
 	--freeze_feature_encoder \
 	--fp16 \
@@ -24,7 +27,7 @@ python run_speech_recognition_ctc.py \
 	--load_best_model_at_end=True \
 	--metric_for_best_model="wer" \
 	--greater_is_better=False \
-	--gradient_accumulation_steps="2" \
+	--gradient_accumulation_steps="8" \
 	--per_device_train_batch_size="8" \
 	--save_steps="500" \
 	--eval_steps="500" \
