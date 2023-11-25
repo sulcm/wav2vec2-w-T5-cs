@@ -1,6 +1,6 @@
 python run_speech_recognition_ctc.py \
 	--model_name_or_path="/storage/plzen4-ntis/projects/public/Lehecka/wav2vec2-base-cs-80k" \
-	--output_dir="/storage/plzen4-ntis/home/sulcm01/outputs/wav2vec2/wav2vec2-cs-baseline/" \
+	--output_dir="/storage/plzen4-ntis/home/sulcm01/outputs/wav2vec2/wav2vec2-cs-v3/" \
 	--overwrite_output_dir \
 	--dataset_name="mozilla-foundation/common_voice_11_0" \
 	--dataset_config_name="cs" \
@@ -11,8 +11,8 @@ python run_speech_recognition_ctc.py \
 	--eval_metrics wer cer \
 	--evaluation_strategy="steps" \
 	--max_steps="20000" \
-	--learning_rate="5e-5" \
-	--warmup_steps="1000" \
+	--learning_rate="8e-5" \
+	--warmup_steps="1500" \
 	--layerdrop="0.0" \
 	--chars_to_ignore , ? . ! - \; \: \" “ % ‘ ” � \
 	--freeze_feature_encoder \
