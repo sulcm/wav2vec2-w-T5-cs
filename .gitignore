@@ -1,4 +1,5 @@
 .ipynb_checkpoint
 .vscode
+results
 run_scripts/wandb
 run_scripts/configs/wav2vec2/JupyterLab_*
