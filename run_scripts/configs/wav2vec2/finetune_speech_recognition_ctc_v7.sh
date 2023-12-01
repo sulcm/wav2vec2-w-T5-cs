@@ -35,4 +35,4 @@ python run_speech_recognition_ctc.py \
 	--logging_steps="10" \
 	--save_total_limit="2" \
 	--gradient_checkpointing \
-	--dataloader_num_workers="4"
+	--dataloader_num_workers="2"
