@@ -29,8 +29,8 @@ python run_speech_recognition_ctc.py \
 	--greater_is_better=False \
 	--gradient_accumulation_steps="8" \
 	--per_device_train_batch_size="64" \
-	--save_steps="500" \
-	--eval_steps="500" \
+	--save_steps="1000" \
+	--eval_steps="1000" \
 	--logging_steps="10" \
 	--save_total_limit="2" \
 	--gradient_checkpointing \
