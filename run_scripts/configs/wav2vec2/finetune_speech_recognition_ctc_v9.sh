@@ -14,11 +14,12 @@ python run_speech_recognition_ctc.py \
 	--learning_rate="3e-5" \
 	--warmup_steps="4000" \
 	--layerdrop="0.075" \
+    --activation_dropout="0.1" \
 	--chars_to_ignore , ? . ! - \; \: \" “ % ‘ ” � \
 	--freeze_feature_encoder \
-	--mask_time_prob="0.065" \
+	--mask_time_prob="0.65" \
 	--mask_time_length="10" \
-	--mask_feature_prob="0.008" \
+	--mask_feature_prob="0.25" \
 	--mask_feature_length="64" \
 	--fp16 \
 	--group_by_length \
