@@ -4,3 +4,4 @@ results
 run_scripts/wandb
 run_scripts/configs/wav2vec2/JupyterLab_*
 JupyterLab_*
+dataset_analysis.ipynb
