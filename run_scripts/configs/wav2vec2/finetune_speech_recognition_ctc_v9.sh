@@ -12,7 +12,7 @@ python run_speech_recognition_ctc.py \
 	--evaluation_strategy="steps" \
 	--max_steps="40000" \
 	--learning_rate="5e-5" \
-	--warmup_steps="4000" \
+	--warmup_steps="5000" \
 	--layerdrop="0.1" \
 	--chars_to_ignore , ? . ! - \; \: \" “ % ‘ ” � \
 	--freeze_feature_encoder \
