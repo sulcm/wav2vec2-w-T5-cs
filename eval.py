@@ -54,17 +54,15 @@ eval_dataset = eval_dataset.map(remove_special_characters, remove_columns=[text_
 
 def map_to_pred(batch):
     inputs = processor(batch["audio"]["array"], sampling_rate=sampling_rate, return_tensors="pt").to(device)
-    
+
     with torch.no_grad():
         logits = model(**inputs).logits
 
     predicted_ids = torch.argmax(logits, dim=-1)
     transcription = processor.batch_decode(predicted_ids)
     batch["pred"] = transcription
-
     return batch
 
-eval_dataset
 result = eval_dataset.map(map_to_pred, remove_columns=[test_args.audio_column_name])
 pred = list(chain.from_iterable(result['pred']))
 
