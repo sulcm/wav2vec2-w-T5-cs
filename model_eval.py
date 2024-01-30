@@ -2,7 +2,6 @@ from datasets import load_dataset, Audio
 from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor
 import torch
 import evaluate
-import torch
 
 import json
 import re
@@ -40,7 +39,7 @@ eval_metrics = {metric: evaluate.load(metric) for metric in test_args.metrics.st
 eval_dataset = load_dataset(test_args.dataset_name, test_args.dataset_config_name, split=test_args.test_split_name)
 eval_dataset = eval_dataset.cast_column(test_args.audio_column_name, Audio(sampling_rate=sampling_rate))
 
-chars_to_ignore_regex = f'[{"".join(test_args.chars_to_ignore)}]'.replace(" ", "")
+chars_to_ignore_regex = "".join(test_args.chars_to_ignore.strip().split())
 text_column_name = test_args.text_column_name
 
 def remove_special_characters(batch):
@@ -50,6 +49,7 @@ def remove_special_characters(batch):
         batch["target_text"] = batch[text_column_name].lower()
     return batch
 
+print("Removing special characters and normalizing text...")
 eval_dataset = eval_dataset.map(remove_special_characters, remove_columns=[text_column_name])
 
 def map_to_pred(batch):
@@ -63,6 +63,7 @@ def map_to_pred(batch):
     batch["pred"] = transcription
     return batch
 
+print("Evaluating model...")
 result = eval_dataset.map(map_to_pred, remove_columns=[test_args.audio_column_name])
 pred = list(chain.from_iterable(result['pred']))
 
@@ -75,7 +76,7 @@ metrics.update({
         "split": test_args.test_split_name
     }
 })
-print("\nEvaluation Results:\n" + json.dumps(metrics, indent=2))
+print("\nEvaluation results:\n" + json.dumps(metrics, indent=2))
 
 if not os.path.isdir(test_args.output_dir):
     os.makedirs(test_args.output_dir)
