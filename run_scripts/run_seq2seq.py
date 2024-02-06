@@ -28,7 +28,7 @@ from typing import Optional, List
 import datasets
 import evaluate
 import numpy as np
-from datasets import load_dataset
+from datasets import load_dataset, load_from_disk
 
 import transformers
 from transformers import (
@@ -48,9 +48,13 @@ from transformers import (
     set_seed,
 )
 from transformers.trainer_utils import get_last_checkpoint
-from transformers.utils import check_min_version, send_example_telemetry
+from transformers.utils import check_min_version
 from transformers.utils.versions import require_version
 
+
+# TODO
+ASR_TRANSCRIPTION = "asr_transcription"
+TARGET_OUTPUT = "target_output"
 
 # Will error if the minimal version of Transformers is not installed. Remove at your own risks.
 check_min_version("4.34.0.dev0")
@@ -363,12 +367,15 @@ def main():
     # download the dataset.
     if data_args.dataset_name is not None:
         # Downloading and loading a dataset from the hub.
-        raw_datasets = load_dataset(
-            data_args.dataset_name,
-            data_args.dataset_config_name,
-            cache_dir=model_args.cache_dir,
-            token=model_args.token,
-        )
+        if data_args.dataset_name.startswith('/') or data_args.dataset_name.startswith('./'):
+            raw_datasets = load_from_disk(data_args.dataset_name)
+        else:
+            raw_datasets = load_dataset(
+                data_args.dataset_name,
+                data_args.dataset_config_name,
+                cache_dir=model_args.cache_dir,
+                token=model_args.token,
+            )
     else:
         data_files = {}
         if data_args.train_file is not None:
@@ -380,8 +387,12 @@ def main():
         if data_args.test_file is not None:
             data_files["test"] = data_args.test_file
             extension = data_args.test_file.split(".")[-1]
+        if extension == "jsonl":
+            builder_name = "json"
+        else:
+            builder_name = extension
         raw_datasets = load_dataset(
-            extension,
+            builder_name,
             data_files=data_files,
             cache_dir=model_args.cache_dir,
             token=model_args.token,
@@ -479,7 +490,7 @@ def main():
 
     if training_args.label_smoothing_factor > 0 and not hasattr(model, "prepare_decoder_input_ids_from_labels"):
         logger.warning(
-            "label_smoothing is enabled but the `prepare_decoder_input_ids_from_labels` method is not defined for"
+            "label_smoothing is enabled but the `prepare_decoder_input_ids_from_labels` method is not defined for "
             f"`{model.__class__.__name__}`. This will lead to loss being calculated twice and will take up more memory"
         )
 
@@ -487,8 +498,8 @@ def main():
     def preprocess_function(examples):
         # inputs = [ex[source_lang] for ex in examples["translation"]]
         # targets = [ex[target_lang] for ex in examples["translation"]]
-        inputs = [ex for ex in examples["incorrect_input"]]
-        targets = [ex for ex in examples["correct_output"]]
+        inputs = [ex for ex in examples[ASR_TRANSCRIPTION]]
+        targets = [ex for ex in examples[TARGET_OUTPUT]]
         inputs = [prefix + inp for inp in inputs]
         model_inputs = tokenizer(inputs, max_length=data_args.max_source_length, padding=padding, truncation=True)
 
@@ -697,17 +708,12 @@ def main():
     # if len(languages) > 0:
     #     kwargs["language"] = languages
 
-    if training_args.push_to_hub:
-        trainer.push_to_hub(**kwargs)
-    else:
-        trainer.create_model_card(**kwargs)
+    # if training_args.push_to_hub:
+    #     trainer.push_to_hub(**kwargs)
+    # else:
+    trainer.create_model_card(**kwargs)
 
     return results
-
-
-def _mp_fn(index):
-    # For xla_spawn (TPUs)
-    main()
 
 
 if __name__ == "__main__":

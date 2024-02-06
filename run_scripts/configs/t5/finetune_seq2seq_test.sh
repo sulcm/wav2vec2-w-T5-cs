@@ -1,27 +1,26 @@
 python run_seq2seq.py \
-	--model_name_or_path="" \
-	--output_dir="/storage/plzen4-ntis/home/sulcm01/outputs//" \
+	--model_name_or_path="/home/sulcm/models/t5/t5-cs-pretrained" \
+	--output_dir="/home/sulcm/models/t5/t5-cs-test/" \
 	--overwrite_output_dir \
-	--dataset_name="" \
-	--length_column_name="input_length" \
-	--eval_metrics="wer" \
+	--dataset_name="/home/sulcm/datasets/t5/asr-correction-cs-v23" \
+	--eval_metrics wer cer \
     --source_prefix="grammar: " \
 	--evaluation_strategy="steps" \
-	--max_steps="10000" \
-	--learning_rate="1e-4" \
-    --weight_decay="0.005" \
+	--max_steps="5000" \
+	--learning_rate="3e-5" \
 	--warmup_steps="500" \
 	--fp16 \
-	--group_by_length \
 	--do_train \
 	--do_eval \
 	--load_best_model_at_end=True \
 	--metric_for_best_model="wer" \
 	--greater_is_better=False \
-	--gradient_accumulation_steps="2" \
 	--per_device_train_batch_size="8" \
+	--gradient_accumulation_steps="8" \
 	--save_steps="500" \
 	--eval_steps="500" \
 	--logging_steps="10" \
 	--save_total_limit="2" \
-	--gradient_checkpointing
+	--gradient_checkpointing \
+	--dataloader_num_workers="8" \
+	--preprocessing_num_workers="8"

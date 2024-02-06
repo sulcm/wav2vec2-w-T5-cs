@@ -39,7 +39,7 @@ eval_metrics = {metric: evaluate.load(metric) for metric in test_args.metrics.st
 eval_dataset = load_dataset(test_args.dataset_name, test_args.dataset_config_name, split=test_args.test_split_name)
 eval_dataset = eval_dataset.cast_column(test_args.audio_column_name, Audio(sampling_rate=sampling_rate))
 
-chars_to_ignore_regex = "".join(test_args.chars_to_ignore.strip().split())
+chars_to_ignore_regex = f'[{"".join(test_args.chars_to_ignore.strip().split())}]'
 text_column_name = test_args.text_column_name
 
 def remove_special_characters(batch):
