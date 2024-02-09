@@ -1,9 +1,10 @@
 python model_eval.py \
 	--w2v2_model_name_or_path="/home/sulcm/models/wav2vec2/wav2vec2-cs-$1" \
+	--t5_model_name_or_path="/home/sulcm/models/t5/t5-spellchecker-cs-$2" \
     --output_dir="./results/" \
-	--dataset_name="mozilla-foundation/common_voice_11_0" \
+	--dataset_name="facebook/voxpopuli" \
 	--dataset_config_name="cs" \
-	--text_column_name="sentence" \
+	--text_column_name="normalized_text" \
 	--audio_column_name="audio" \
 	--test_split_name="test" \
 	--metrics "wer cer" \

@@ -4,3 +4,5 @@ results
 run_scripts/wandb
 run_scripts/configs/wav2vec2/JupyterLab_*
 JupyterLab_*
+test.ipynb
+__pycache__

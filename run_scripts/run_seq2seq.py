@@ -228,7 +228,7 @@ class DataTrainingArguments:
         },
     )
     num_beams: Optional[int] = field(
-        default=None,
+        default=1,
         metadata={
             "help": (
                 "Number of beams to use for evaluation. This argument will be passed to ``model.generate``, "
@@ -366,10 +366,11 @@ def main():
     # In distributed training, the load_dataset function guarantee that only one local process can concurrently
     # download the dataset.
     if data_args.dataset_name is not None:
-        # Downloading and loading a dataset from the hub.
-        if data_args.dataset_name.startswith('/') or data_args.dataset_name.startswith('./'):
+        if data_args.dataset_name.startswith('/') or data_args.dataset_name.startswith('./') or data_args.dataset_name.startswith('../'):
+            # Load locally stored dataset.
             raw_datasets = load_from_disk(data_args.dataset_name)
         else:
+            # Downloading and loading a dataset from the hub.
             raw_datasets = load_dataset(
                 data_args.dataset_name,
                 data_args.dataset_config_name,
@@ -498,9 +499,10 @@ def main():
     def preprocess_function(examples):
         # inputs = [ex[source_lang] for ex in examples["translation"]]
         # targets = [ex[target_lang] for ex in examples["translation"]]
-        inputs = [ex for ex in examples[ASR_TRANSCRIPTION]]
+        inputs = [prefix + ex for ex in examples[ASR_TRANSCRIPTION]]
         targets = [ex for ex in examples[TARGET_OUTPUT]]
-        inputs = [prefix + inp for inp in inputs]
+        # inputs = [prefix + inp for inp in inputs]
+        # print(inputs, targets)
         model_inputs = tokenizer(inputs, max_length=data_args.max_source_length, padding=padding, truncation=True)
 
         # Tokenize targets with the `text_target` keyword argument
@@ -588,7 +590,8 @@ def main():
 
     def postprocess_text(preds, labels):
         preds = [pred.strip() for pred in preds]
-        labels = [[label.strip()] for label in labels]
+        # labels = [[label.strip()] for label in labels]
+        labels = [label.strip() for label in labels]
 
         return preds, labels
 
@@ -604,16 +607,17 @@ def main():
 
         # Some simple post-processing
         decoded_preds, decoded_labels = postprocess_text(decoded_preds, decoded_labels)
-
+        print("======")
+        print("Pred: ", decoded_preds)
+        print("Truth: ", decoded_labels)
         # TODO
         # check if "decoded_preds" or "decoded_labels" include --source_prefix, if sou remove it before metric compute
         # result = metric.compute(predictions=decoded_preds, references=decoded_labels)
         # result = {"bleu": result["score"]}
         result = {metric_name: metric.compute(predictions=decoded_preds, references=decoded_labels) for metric_name, metric in eval_metrics.items()}
-
         prediction_lens = [np.count_nonzero(pred != tokenizer.pad_token_id) for pred in preds]
         result["gen_len"] = np.mean(prediction_lens)
-        result = {k: round(v, 4) for k, v in result.items()}
+        # result = {k: round(v, 4) for k, v in result.items()}
         return result
 
     # Initialize our Trainer
@@ -694,7 +698,7 @@ def main():
 
     # TODO
     # kwargs = {"finetuned_from": model_args.model_name_or_path, "tasks": "translation"}
-    kwargs = {"finetuned_from": model_args.model_name_or_path, "tasks": "grammar-correction"}
+    kwargs = {"finetuned_from": model_args.model_name_or_path, "tasks": "spell check"}
     if data_args.dataset_name is not None:
         kwargs["dataset_tags"] = data_args.dataset_name
         if data_args.dataset_config_name is not None:

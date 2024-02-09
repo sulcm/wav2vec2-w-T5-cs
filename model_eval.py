@@ -1,6 +1,6 @@
 from datasets import load_dataset, Audio
-from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor
-import torch
+# from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor
+# import torch
 import evaluate
 
 import json
@@ -9,12 +9,16 @@ import os
 from datetime import datetime
 from itertools import chain
 
+from asr_w_spellchecker import ST6
+
 import argparse
 
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("--model_name_or_path")
+# parser.add_argument("--model_name_or_path")
+parser.add_argument("--w2v2_model_name_or_path")
+parser.add_argument("--t5_model_name_or_path", default="", required=False)
 parser.add_argument("--output_dir")
 parser.add_argument("--dataset_name")
 parser.add_argument("--dataset_config_name")
@@ -27,12 +31,19 @@ parser.add_argument("--chars_to_ignore")
 test_args = parser.parse_args()
 
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
+# device = "cuda" if torch.cuda.is_available() else "cpu"
 
-model = Wav2Vec2ForCTC.from_pretrained(test_args.model_name_or_path).to(device)
-processor = Wav2Vec2Processor.from_pretrained(test_args.model_name_or_path)
+# model = Wav2Vec2ForCTC.from_pretrained(test_args.model_name_or_path).to(device)
+# processor = Wav2Vec2Processor.from_pretrained(test_args.model_name_or_path)
 
-sampling_rate = processor.feature_extractor.sampling_rate
+# sampling_rate = processor.feature_extractor.sampling_rate
+
+st6_model = ST6(
+    wav2vec2_path=test_args.w2v2_model_name_or_path,
+    t5_path=test_args.t5_model_name_or_path,
+    use_cuda=True
+    )
+sampling_rate = st6_model.sampling_rate
 
 eval_metrics = {metric: evaluate.load(metric) for metric in test_args.metrics.strip().split()}
 
@@ -53,13 +64,14 @@ print("Removing special characters and normalizing text...")
 eval_dataset = eval_dataset.map(remove_special_characters, remove_columns=[text_column_name])
 
 def map_to_pred(batch):
-    inputs = processor(batch["audio"]["array"], sampling_rate=sampling_rate, return_tensors="pt").to(device)
+    # inputs = processor(batch["audio"]["array"], sampling_rate=sampling_rate, return_tensors="pt").to(device)
 
-    with torch.no_grad():
-        logits = model(**inputs).logits
+    # with torch.no_grad():
+    #     logits = model(**inputs).logits
 
-    predicted_ids = torch.argmax(logits, dim=-1)
-    transcription = processor.batch_decode(predicted_ids)
+    # predicted_ids = torch.argmax(logits, dim=-1)
+    # transcription = processor.batch_decode(predicted_ids)
+    transcription = st6_model(batch["audio"]["array"])
     batch["pred"] = transcription
     return batch
 
@@ -69,7 +81,8 @@ pred = list(chain.from_iterable(result['pred']))
 
 metrics = {k: v.compute(predictions=pred, references=result['target_text']) for k, v in eval_metrics.items()}
 metrics.update({
-    "model": test_args.model_name_or_path,
+    "wav2vec2_model": test_args.w2v2_model_name_or_path,
+    "t5_model": test_args.t5_model_name_or_path,
     "dataset": {
         "name": test_args.dataset_name,
         "language": test_args.dataset_config_name,
