@@ -501,8 +501,6 @@ def main():
         # targets = [ex[target_lang] for ex in examples["translation"]]
         inputs = [prefix + ex for ex in examples[ASR_TRANSCRIPTION]]
         targets = [ex for ex in examples[TARGET_OUTPUT]]
-        # inputs = [prefix + inp for inp in inputs]
-        # print(inputs, targets)
         model_inputs = tokenizer(inputs, max_length=data_args.max_source_length, padding=padding, truncation=True)
 
         # Tokenize targets with the `text_target` keyword argument
@@ -607,9 +605,6 @@ def main():
 
         # Some simple post-processing
         decoded_preds, decoded_labels = postprocess_text(decoded_preds, decoded_labels)
-        print("======")
-        print("Pred: ", decoded_preds)
-        print("Truth: ", decoded_labels)
         # TODO
         # check if "decoded_preds" or "decoded_labels" include --source_prefix, if sou remove it before metric compute
         # result = metric.compute(predictions=decoded_preds, references=decoded_labels)

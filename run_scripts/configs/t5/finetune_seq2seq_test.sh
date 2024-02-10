@@ -1,3 +1,5 @@
+# export WANDB_DISABLED=true
+
 python run_seq2seq.py \
 	--model_name_or_path="/home/sulcm/models/t5/t5-cs-pretrained" \
 	--output_dir="/home/sulcm/models/t5/t5-spellchecker-cs-test/" \
@@ -12,8 +14,6 @@ python run_seq2seq.py \
 	--warmup_steps="500" \
 	--max_source_length="256" \
 	--max_target_length="256" \
-	--generation_max_length="256" \
-	--layerdrop="0.1" \
 	--weight_decay="0.01" \
 	--sortish_sampler \
 	--predict_with_generate \
@@ -25,8 +25,8 @@ python run_seq2seq.py \
 	--per_device_train_batch_size="4" \
 	--gradient_accumulation_steps="4" \
 	--save_steps="1000" \
-	--eval_steps="10" \
-	--logging_steps="10" \
+	--eval_steps="1000" \
+	--logging_steps="100" \
 	--save_total_limit="2" \
 	--dataloader_num_workers="8" \
 	--preprocessing_num_workers="8"
