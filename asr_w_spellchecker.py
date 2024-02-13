@@ -13,12 +13,7 @@ class ST6():
     framework = "pt"
 
     def __init__(self, wav2vec2_path: str, t5_path: str="", use_cuda: bool=True) -> None:
-        self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(logging.INFO)
-        formatter = logging.Formatter('%(asctime)s - %(module)s.%(funcName)s - %(levelname)s: %(message)s')
-        console_handler = logging.StreamHandler()
-        console_handler.setFormatter(formatter)
-        self.logger.addHandler(console_handler)
+        self.logger = self.get_logger(__name__)
 
         self.w2v2_path = wav2vec2_path
         self.t5_path = t5_path
@@ -28,17 +23,16 @@ class ST6():
 
         self.logger.info(f"Loading Wav2Vec2 model from {self.w2v2_path} ...")
         self.w2v2_processor = Wav2Vec2Processor.from_pretrained(self.w2v2_path)
-        self.w2v2_model = Wav2Vec2ForCTC.from_pretrained(self.w2v2_path)
-        self.w2v2_model.to(self.device)
+        self.w2v2_model = Wav2Vec2ForCTC.from_pretrained(self.w2v2_path).to(self.device)
         self.sampling_rate = self.w2v2_processor.feature_extractor.sampling_rate
 
         if self.t5_path != "":
             self.logger.info(f"Loading T5 model from {self.t5_path} ...")
             self.t5_tokenizer = T5Tokenizer.from_pretrained(self.t5_path)
-            self.t5_model = T5ForConditionalGeneration.from_pretrained(self.t5_path)
-            self.t5_model.to(self.device)
+            self.t5_model = T5ForConditionalGeneration.from_pretrained(self.t5_path).to(self.device)
             self.prefix = "spell check: "
             self.max_new_tokens = 64
+            self.num_beams = 4
         
         self.logger.info("ST6 was successfully initialized")
         pass
@@ -56,10 +50,19 @@ class ST6():
         self.logger.debug(f"Wav2Vec2 transcription: {transcription}")
 
         inputs = self.t5_tokenizer([self.prefix + sentence for sentence in transcription], return_tensors=self.framework).to(self.device)
-        output_sequences = self.t5_model.generate(**inputs, max_new_tokens=self.max_new_tokens, num_beams=8, do_sample=True)
+        output_sequences = self.t5_model.generate(**inputs, max_new_tokens=self.max_new_tokens, num_beams=self.num_beams, do_sample=True)
         corrected_input = self.t5_tokenizer.batch_decode(output_sequences, skip_special_tokens=True)
 
         return corrected_input
     
     def __call__(self, input_audio: list|list[list]) -> list:
         return self.forward(input_audio=input_audio)
+    
+    def get_logger(self, name: str=__name__, logging_level=logging.INFO) -> logging.Logger:
+        logger = logging.getLogger(name)
+        logger.setLevel(logging_level)
+        formatter = logging.Formatter('%(asctime)s - %(module)s.%(funcName)s - %(levelname)s: %(message)s')
+        console_handler = logging.StreamHandler()
+        console_handler.setFormatter(formatter)
+        logger.addHandler(console_handler)
+        return logger

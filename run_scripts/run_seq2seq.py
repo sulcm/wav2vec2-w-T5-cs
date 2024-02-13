@@ -606,6 +606,9 @@ def main():
         # Some simple post-processing
         decoded_preds, decoded_labels = postprocess_text(decoded_preds, decoded_labels)
         # TODO
+        # print("=====")
+        # print("Preds: ", decoded_preds)
+        # print("Truths: ", decoded_labels)
         # check if "decoded_preds" or "decoded_labels" include --source_prefix, if sou remove it before metric compute
         # result = metric.compute(predictions=decoded_preds, references=decoded_labels)
         # result = {"bleu": result["score"]}

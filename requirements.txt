@@ -4,6 +4,7 @@ torch
 torchaudio
 librosa
 jiwer
+sacrebleu
 evaluate
 accelerate
 sentencepiece

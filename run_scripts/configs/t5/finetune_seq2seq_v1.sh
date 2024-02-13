@@ -1,0 +1,33 @@
+# export WANDB_DISABLED=true
+
+python run_seq2seq.py \
+	--model_name_or_path="/home/sulcm/models/t5/t5-cs-pretrained" \
+	--output_dir="/home/sulcm/models/t5/t5-spellchecker-cs-v1/" \
+	--overwrite_output_dir \
+	--dataset_name="/home/sulcm/datasets/t5/asr-correction-cs-v23" \
+	--eval_metrics wer cer \
+    --source_prefix="spell check: " \
+	--evaluation_strategy="steps" \
+	--max_steps="10000" \
+	--learning_rate="3e-4" \
+	--lr_scheduler_type="constant_with_warmup" \
+	--warmup_steps="500" \
+	--max_source_length="256" \
+	--max_target_length="256" \
+	--weight_decay="0.01" \
+	--generation_num_beams="4" \
+	--sortish_sampler \
+	--predict_with_generate \
+	--do_train \
+	--do_eval \
+	--load_best_model_at_end=True \
+	--metric_for_best_model="wer" \
+	--greater_is_better=False \
+	--per_device_train_batch_size="4" \
+	--gradient_accumulation_steps="4" \
+	--save_steps="1000" \
+	--eval_steps="1000" \
+	--logging_steps="100" \
+	--save_total_limit="2" \
+	--dataloader_num_workers="8" \
+	--preprocessing_num_workers="8"
