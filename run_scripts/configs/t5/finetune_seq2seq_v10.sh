@@ -2,15 +2,15 @@
 
 python run_seq2seq.py \
 	--model_name_or_path="/storage/plzen4-ntis/projects/public/Lehecka/t5_32k_cccs_jmzw.v2" \
-	--output_dir="/storage/plzen4-ntis/home/sulcm01/outputs/t5/t5-spellchecker-cs-v7/" \
+	--output_dir="/storage/plzen4-ntis/home/sulcm01/outputs/t5/t5-spellchecker-cs-v10/" \
 	--overwrite_output_dir \
 	--dataset_name="/storage/plzen4-ntis/home/sulcm01/datasets/t5/asr-correction-cs-v23" \
 	--eval_metrics wer cer \
 	--source_prefix="spell check: " \
 	--evaluation_strategy="steps" \
-	--max_steps="10000" \
+	--max_steps="20000" \
 	--learning_rate="1e-4" \
-	--warmup_steps="1000" \
+	--warmup_steps="2000" \
 	--max_source_length="256" \
 	--max_target_length="256" \
 	--weight_decay="0.01" \
@@ -23,8 +23,7 @@ python run_seq2seq.py \
 	--load_best_model_at_end=True \
 	--metric_for_best_model="wer" \
 	--greater_is_better=False \
-	--per_device_train_batch_size="32" \
-    --gradient_accumulation_steps="2" \
+	--per_device_train_batch_size="16" \
 	--save_steps="1000" \
 	--eval_steps="1000" \
 	--logging_steps="100" \
