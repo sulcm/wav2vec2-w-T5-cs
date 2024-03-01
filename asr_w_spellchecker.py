@@ -12,11 +12,13 @@ from transformers import (
 class ST6():
     framework = "pt"
 
-    def __init__(self, wav2vec2_path: str, t5_path: str="", use_cuda: bool=True, logging_level=logging.INFO) -> None:
+    def __init__(self, wav2vec2_path: str, t5_path: str="", config: dict[dict]={}, use_cuda: bool=True, logging_level=logging.INFO) -> None:
         self.logger = self.get_logger(name=__name__, logging_level=logging_level)
 
         self.w2v2_path = wav2vec2_path
+        self.w2v2_config = config.get("wav2vec2_config", {})
         self.t5_path = t5_path
+        self.t5_config = config.get("t5_config", {})
 
         self.device = torch.device("cuda" if (torch.cuda.is_available() and use_cuda) else "cpu")
         self.logger.info(f"Using device '{self.device}' with framework '{self.framework}'")
@@ -25,19 +27,21 @@ class ST6():
         self.w2v2_processor = Wav2Vec2Processor.from_pretrained(self.w2v2_path)
         self.w2v2_model = Wav2Vec2ForCTC.from_pretrained(self.w2v2_path).to(self.device)
         self.sampling_rate = self.w2v2_processor.feature_extractor.sampling_rate
+        self.logger.info(f"Wav2Vec2.0 was initialized")
 
         if self.t5_path != "":
             self.logger.info(f"Loading T5 model from {self.t5_path} ...")
             self.t5_tokenizer = T5Tokenizer.from_pretrained(self.t5_path)
             self.t5_model = T5ForConditionalGeneration.from_pretrained(self.t5_path).to(self.device)
             self.prefix = "spell check: "
-            self.max_new_tokens = 64
-            self.num_beams = 4
+            self.max_new_tokens = self.t5_config.get("max_new_tokens", 64)
+            self.num_beams = self.t5_config.get("num_beams", 4)
+            self.logger.info(f"T5 was initialized with parameters {self.max_new_tokens=}; {self.num_beams=}")
         
         self.logger.info("ST6 was successfully initialized")
         pass
 
-    def forward(self, input_audio: list|list[list], return_asr_output: bool=False) -> list:
+    def infer(self, input_audio: list|list[list], return_asr_output: bool=False) -> list:
         inputs = self.w2v2_processor(input_audio, sampling_rate=self.sampling_rate, return_tensors=self.framework, padding=True).to(self.device)
         with torch.no_grad():
             logits = self.w2v2_model(**inputs).logits
@@ -56,7 +60,7 @@ class ST6():
         return corrected_input if not return_asr_output else (corrected_input, transcription)
     
     def __call__(self, input_audio: list|list[list], return_asr_output: bool=False) -> list:
-        return self.forward(input_audio=input_audio, return_asr_output=return_asr_output)
+        return self.infer(input_audio=input_audio, return_asr_output=return_asr_output)
     
     def get_logger(self, name: str=__name__, logging_level=logging.NOTSET) -> logging.Logger:
         logger = logging.getLogger(name)
