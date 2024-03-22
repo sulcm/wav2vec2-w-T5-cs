@@ -50,7 +50,6 @@ class ST6():
 
         if self.t5_path == "":
             return transcription
-        
         self.logger.debug(f"Wav2Vec2 transcription: {transcription}")
 
         inputs = self.t5_tokenizer([self.prefix + sentence for sentence in transcription], return_tensors=self.framework, padding=True).to(self.device)

@@ -1,4 +1,4 @@
-transformers>=4.34.0
+transformers>=4.39.0
 datasets>=1.18.0
 torch
 torchaudio
@@ -6,6 +6,6 @@ librosa
 jiwer
 sacrebleu
 evaluate
-accelerate
+accelerate>=0.28.0
 sentencepiece
 protobuf
