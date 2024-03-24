@@ -1,31 +1,34 @@
-# export WANDB_DISABLED=true
+export WANDB_DISABLED=true
 
 python run_seq2seq.py \
 	--model_name_or_path="/home/sulcm/models/t5/t5-cs-pretrained" \
 	--output_dir="/home/sulcm/models/t5/t5-spellchecker-cs-test/" \
 	--overwrite_output_dir \
 	--dataset_name="/home/sulcm/datasets/t5/asr-correction-cs-v23" \
+	--source="asr_transcription" \
+	--target="target_output" \
 	--eval_metrics wer cer \
-    --source_prefix="spell check: " \
+	--source_prefix="spell check: " \
 	--evaluation_strategy="steps" \
-	--max_steps="10000" \
+	--max_steps="20000" \
 	--learning_rate="3e-4" \
-	--lr_scheduler_type="constant_with_warmup" \
-	--warmup_steps="500" \
-	--max_source_length="256" \
-	--max_target_length="256" \
-	--weight_decay="0.01" \
+	--warmup_steps="800" \
+	--max_source_length="1024" \
+	--max_target_length="128" \
+	--num_beams="4" \
+	--generation_num_beams="4" \
+	--generation_max_length="64" \
 	--sortish_sampler \
 	--predict_with_generate \
+	--custom_generation_config="./configs/t5/generation_config/t5_v1.json" \
 	--do_train \
 	--do_eval \
 	--load_best_model_at_end=True \
 	--metric_for_best_model="wer" \
 	--greater_is_better=False \
-	--per_device_train_batch_size="4" \
-	--gradient_accumulation_steps="4" \
+	--per_device_train_batch_size="8" \
 	--save_steps="1000" \
-	--eval_steps="1000" \
+	--eval_steps="100" \
 	--logging_steps="100" \
 	--save_total_limit="2" \
 	--dataloader_num_workers="8" \

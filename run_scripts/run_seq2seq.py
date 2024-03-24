@@ -23,11 +23,13 @@ import os
 import sys
 import warnings
 from dataclasses import dataclass, field
-from typing import Optional, List
+from typing import Optional, Union, List
+from pathlib import Path
 
 import datasets
 import evaluate
 import numpy as np
+import json
 from datasets import load_dataset, load_from_disk
 
 import transformers
@@ -52,10 +54,6 @@ from transformers.utils import check_min_version
 from transformers.utils.versions import require_version
 
 
-# TODO
-ASR_TRANSCRIPTION = "asr_transcription"
-TARGET_OUTPUT = "target_output"
-
 # Will error if the minimal version of Transformers is not installed. Remove at your own risks.
 check_min_version("4.34.0.dev0")
 
@@ -69,6 +67,23 @@ logger = logging.getLogger(__name__)
 
 def list_field(default=None, metadata=None):
     return field(default_factory=lambda: default, metadata=metadata)
+
+
+@dataclass
+class CustomTrainingArgs:
+    """
+    Custom arguments for seq2seq training (spell cheking in mind with fix for `GenerationConfig` setting)
+    """
+
+    custom_generation_config: Optional[Union[str, Path]] = field(
+        default=None,
+        metadata={
+            "help": "File path pointing to a custom GenerationConfig json file, to use during prediction (provided arguments will update existing GenerationConfig)."
+        },
+    )
+    source: str = field(default="asr_transcription", metadata={"help": "Source transcription column id for spell check."})
+    target: str = field(default="target_output", metadata={"help": "Target output column id with corrent spelling."})
+
 
 @dataclass
 class ModelArguments:
@@ -282,13 +297,13 @@ def main():
     # or by passing the --help flag to this script.
     # We now keep distinct sets of args, for a cleaner separation of concerns.
 
-    parser = HfArgumentParser((ModelArguments, DataTrainingArguments, Seq2SeqTrainingArguments))
+    parser = HfArgumentParser((ModelArguments, DataTrainingArguments, Seq2SeqTrainingArguments, CustomTrainingArgs))
     if len(sys.argv) == 2 and sys.argv[1].endswith(".json"):
         # If we pass only one argument to the script and it's the path to a json file,
         # let's parse it to get our arguments.
-        model_args, data_args, training_args = parser.parse_json_file(json_file=os.path.abspath(sys.argv[1]))
+        model_args, data_args, training_args, custom_args = parser.parse_json_file(json_file=os.path.abspath(sys.argv[1]))
     else:
-        model_args, data_args, training_args = parser.parse_args_into_dataclasses()
+        model_args, data_args, training_args, custom_args = parser.parse_args_into_dataclasses()
 
     if model_args.use_auth_token is not None:
         warnings.warn("The `use_auth_token` argument is deprecated and will be removed in v4.34.", FutureWarning)
@@ -413,6 +428,15 @@ def main():
         token=model_args.token,
         trust_remote_code=model_args.trust_remote_code,
     )
+    if custom_args.custom_generation_config is not None:
+        custom_gen_config_path = Path(custom_args.custom_generation_config)
+        if custom_gen_config_path.is_file():
+            with open(custom_gen_config_path, "r") as f:
+                modification_2_gen_config = json.load(f)
+            for k, v in modification_2_gen_config.items():
+                if hasattr(config, k):
+                    setattr(config, k, v)
+
     tokenizer = AutoTokenizer.from_pretrained(
         model_args.tokenizer_name if model_args.tokenizer_name else model_args.model_name_or_path,
         cache_dir=model_args.cache_dir,
@@ -421,6 +445,7 @@ def main():
         token=model_args.token,
         trust_remote_code=model_args.trust_remote_code,
     )
+
     model = AutoModelForSeq2SeqLM.from_pretrained(
         model_args.model_name_or_path,
         from_tf=bool(".ckpt" in model_args.model_name_or_path),
@@ -512,8 +537,8 @@ def main():
     def preprocess_function(examples):
         # inputs = [ex[source_lang] for ex in examples["translation"]]
         # targets = [ex[target_lang] for ex in examples["translation"]]
-        inputs = [prefix + ex for ex in examples[ASR_TRANSCRIPTION]]
-        targets = [ex for ex in examples[TARGET_OUTPUT]]
+        inputs = [prefix + ex for ex in examples[custom_args.source]]
+        targets = [ex for ex in examples[custom_args.target]]
         model_inputs = tokenizer(inputs, max_length=data_args.max_source_length, padding=padding, truncation=True)
 
         # Tokenize targets with the `text_target` keyword argument

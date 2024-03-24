@@ -1,0 +1,9 @@
+{
+    "do_sample": true,
+    "num_beams": 4,
+    "length_penalty": 0.6,
+    "penalty_alpha": 0.6,
+    "max_length": 64,
+    "guidance_scale": 2.0,
+    "renormalize_logits": true
+}

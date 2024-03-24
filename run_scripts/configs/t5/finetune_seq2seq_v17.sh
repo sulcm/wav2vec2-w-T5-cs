@@ -5,6 +5,8 @@ python run_seq2seq.py \
 	--output_dir="/storage/plzen4-ntis/home/sulcm01/outputs/t5/t5-spellchecker-cs-v17/" \
 	--overwrite_output_dir \
 	--dataset_name="/storage/plzen4-ntis/home/sulcm01/datasets/t5/asr-correction-cs-v23" \
+	--source="asr_transcription" \
+	--target="target_output" \
 	--eval_metrics wer cer \
 	--source_prefix="spell check: " \
 	--evaluation_strategy="steps" \
@@ -18,6 +20,7 @@ python run_seq2seq.py \
 	--generation_max_length="64" \
 	--sortish_sampler \
 	--predict_with_generate \
+	--custom_generation_config="./configs/t5/generation_config/t5_v1.json" \
 	--do_train \
 	--do_eval \
 	--load_best_model_at_end=True \
