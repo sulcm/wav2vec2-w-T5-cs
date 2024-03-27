@@ -26,8 +26,8 @@ python run_seq2seq.py \
 	--load_best_model_at_end=True \
 	--metric_for_best_model="wer" \
 	--greater_is_better=False \
-	--per_device_train_batch_size="16" \
-	--gradient_accumulation_steps="8" \
+	--per_device_train_batch_size="64" \
+	--gradient_accumulation_steps="2" \
 	--save_steps="1000" \
 	--eval_steps="1000" \
 	--logging_steps="100" \
