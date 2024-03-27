@@ -2,7 +2,7 @@
 
 python run_seq2seq.py \
 	--model_name_or_path="/storage/plzen4-ntis/projects/public/Lehecka/t5_32k_cccs_jmzw.v2" \
-	--output_dir="/storage/plzen4-ntis/home/sulcm01/outputs/t5/t5-spellchecker-cs-v17/" \
+	--output_dir="/storage/plzen4-ntis/home/sulcm01/outputs/t5/t5-spellchecker-cs-v19/" \
 	--overwrite_output_dir \
 	--dataset_name="/storage/plzen4-ntis/home/sulcm01/datasets/t5/asr-correction-cs-v23" \
 	--source="asr_transcription" \
@@ -12,7 +12,7 @@ python run_seq2seq.py \
 	--evaluation_strategy="steps" \
 	--max_steps="20000" \
 	--learning_rate="3e-4" \
-	--warmup_steps="800" \
+	--warmup_steps="1000" \
 	--max_source_length="1024" \
 	--max_target_length="128" \
 	--num_beams="4" \
