@@ -6,6 +6,6 @@ python model_eval.py \
 	--dataset_config_name="cs" \
 	--text_column_name="sentence" \
 	--audio_column_name="audio" \
-	--test_split_name="test[:1000]" \
+	--test_split_name="test" \
 	--metrics "wer cer" \
 	--chars_to_ignore ", ? . ! - \; \: \" “ % ‘ ” �"

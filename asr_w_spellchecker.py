@@ -36,7 +36,8 @@ class ST6():
             self.prefix = "spell check: "
             self.max_new_tokens = self.t5_config.get("max_new_tokens", 64)
             self.num_beams = self.t5_config.get("num_beams", 4)
-            self.logger.info(f"T5 was initialized with parameters {self.max_new_tokens=}; {self.num_beams=}")
+            self.do_sample = self.t5_config.get("do_sample", True)
+            self.logger.info(f"T5 was initialized with parameters {self.max_new_tokens=}; {self.num_beams=}; {self.do_sample=}")
         
         self.logger.info("ST6 was successfully initialized")
         pass
@@ -53,7 +54,7 @@ class ST6():
         self.logger.debug(f"Wav2Vec2 transcription: {transcription}")
 
         inputs = self.t5_tokenizer([self.prefix + sentence for sentence in transcription], return_tensors=self.framework, padding=True).to(self.device)
-        output_sequences = self.t5_model.generate(**inputs, max_new_tokens=self.max_new_tokens, num_beams=self.num_beams, do_sample=True)
+        output_sequences = self.t5_model.generate(**inputs, max_new_tokens=self.max_new_tokens, num_beams=self.num_beams, do_sample=self.do_sample)
         corrected_input = self.t5_tokenizer.batch_decode(output_sequences, skip_special_tokens=True)
 
         return corrected_input if not return_asr_output else (corrected_input, transcription)
