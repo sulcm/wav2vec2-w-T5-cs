@@ -1,0 +1,1 @@
+{"wer": 0.1551212480922503, "cer": 0.06653178282391765, "wav2vec2_model": "/home/sulcm/models/wav2vec2/wav2vec2-cs-v23", "t5_model": "", "dataset": {"name": "facebook/voxpopuli", "language": "cs", "split": "test"}}

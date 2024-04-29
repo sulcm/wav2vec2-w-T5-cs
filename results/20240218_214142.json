@@ -1,0 +1,1 @@
+{"wer": 0.3916049382716049, "cer": 0.1901861916923144, "wav2vec2_model": "/home/sulcm/models/wav2vec2/wav2vec2-cs-v23", "t5_model": "", "dataset": {"name": "PolyAI/minds14", "language": "cs-CZ", "split": "train"}}

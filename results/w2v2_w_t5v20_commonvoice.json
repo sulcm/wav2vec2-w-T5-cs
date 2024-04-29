@@ -1,0 +1,1 @@
+{"wer": 0.139174972824585, "cer": 0.06459348859601613, "wav2vec2_model": "/home/sulcm/models/wav2vec2/wav2vec2-cs-v23", "t5_model": "/home/sulcm/models/t5/t5-spellchecker-cs-v20", "dataset": {"name": "mozilla-foundation/common_voice_11_0", "language": "cs", "split": "test"}, "t5_gen_config": {"num_beams": 4, "do_sample": true}}

@@ -1,0 +1,1 @@
+{"wer": 0.38555555555555554, "cer": 0.26787156483967434, "wav2vec2_model": "/home/sulcm/models/wav2vec2/wav2vec2-cs-v23", "t5_model": "/home/sulcm/models/t5/t5-spellchecker-cs-v2", "dataset": {"name": "PolyAI/minds14", "language": "cs-CZ", "split": "train"}}

@@ -1,0 +1,1 @@
+{"wer": 0.1531219485233156, "cer": 0.03608653788289101, "wav2vec2_model": "/home/sulcm/models/wav2vec2/wav2vec2-cs-v23", "t5_model": "", "dataset": {"name": "mozilla-foundation/common_voice_11_0", "language": "cs", "split": "test"}}

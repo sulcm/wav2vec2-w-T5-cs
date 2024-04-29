@@ -1,9 +1,7 @@
 .ipynb_checkpoints
 .vscode
-results
 run_scripts/wandb
 run_scripts/configs/wav2vec2/JupyterLab_*
 JupyterLab_*
-test.ipynb
 __pycache__
-data
+data/czech-morfflex2.0-pdtc1.0-220710

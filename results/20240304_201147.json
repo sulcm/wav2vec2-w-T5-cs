@@ -1,0 +1,1 @@
+{"wer": 0.10225538409360692, "cer": 0.06148346035986486, "wav2vec2_model": "/home/sulcm/models/wav2vec2/wav2vec2-cs-v6", "t5_model": "/home/sulcm/models/t5/t5-spellchecker-cs-v4", "dataset": {"name": "facebook/voxpopuli", "language": "cs", "split": "test"}}
