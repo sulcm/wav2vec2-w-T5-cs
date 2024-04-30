@@ -12,13 +12,18 @@ from transformers import (
 class ST6():
     framework = "pt"
 
-    def __init__(self, wav2vec2_path: str, t5_path: str="", config: dict[dict]={}, use_cuda: bool=True, logging_level=logging.INFO) -> None:
+    def __init__(self,
+                 wav2vec2_path: str,
+                 t5_path: str="",
+                 t5_gen_config: dict={"max_new_tokens": 64, "num_beams": 1, "do_sample": False},
+                 use_cuda: bool=True,
+                 logging_level=logging.INFO
+                ) -> None:
         self.logger = self.get_logger(name=__name__, logging_level=logging_level)
 
         self.w2v2_path = wav2vec2_path
-        self.w2v2_config = config.get("wav2vec2_config", {})
         self.t5_path = t5_path
-        self.t5_config = config.get("t5_config", {})
+        self.t5_config = t5_gen_config
 
         self.device = torch.device("cuda" if (torch.cuda.is_available() and use_cuda) else "cpu")
         self.logger.info(f"Using device '{self.device}' with framework '{self.framework}'")
@@ -34,10 +39,7 @@ class ST6():
             self.t5_tokenizer = T5Tokenizer.from_pretrained(self.t5_path)
             self.t5_model = T5ForConditionalGeneration.from_pretrained(self.t5_path).to(self.device)
             self.prefix = "spell check: "
-            self.max_new_tokens = self.t5_config.get("max_new_tokens", 64)
-            self.num_beams = self.t5_config.get("num_beams", 4)
-            self.do_sample = self.t5_config.get("do_sample", True)
-            self.logger.info(f"T5 was initialized with parameters {self.max_new_tokens=}; {self.num_beams=}; {self.do_sample=}")
+            self.logger.info(f"T5 was initialized with generation configuration: {self.t5_config}")
         
         self.logger.info("ST6 was successfully initialized")
         pass
@@ -54,7 +56,7 @@ class ST6():
         self.logger.debug(f"Wav2Vec2 transcription: {transcription}")
 
         inputs = self.t5_tokenizer([self.prefix + sentence for sentence in transcription], return_tensors=self.framework, padding=True).to(self.device)
-        output_sequences = self.t5_model.generate(**inputs, max_new_tokens=self.max_new_tokens, num_beams=self.num_beams, do_sample=self.do_sample)
+        output_sequences = self.t5_model.generate(**inputs, **self.t5_config)
         corrected_input = self.t5_tokenizer.batch_decode(output_sequences, skip_special_tokens=True)
 
         return corrected_input if not return_asr_output else (corrected_input, transcription)
