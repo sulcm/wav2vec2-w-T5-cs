@@ -9,7 +9,10 @@
         "iy": ["i", "y", "í", "ý"],
         "uu": ["ú", "ů", "u"],
         "prefixes": ["s", "z", "vz", "roz", "nej", "před", "po", "vý", "vy", "bez", "se", "ze", "za", "od", "do", "o", "ne"],
-        "sz": ["s", "z", "vz", "š", "ž"]
+        "szc": ["s", "z", "š", "ž", "c", "č"],
+        "dt": ["d", "t", "ď", "ť"],
+        "gk": ["g", "k"],
+        "bp": ["b", "p"]
     },
-    "classes": ["added_space", "removed_space", "prepositions", "conjunctions", "prefixes", "iy", "uu", "sz", "other"]
+    "classes": ["added_space", "removed_space", "prepositions", "conjunctions", "prefixes", "iy", "uu", "szc", "dt", "gk", "bp", "other"]
 }

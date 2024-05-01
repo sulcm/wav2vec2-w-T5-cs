@@ -15,7 +15,7 @@ class ST6():
     def __init__(self,
                  wav2vec2_path: str,
                  t5_path: str="",
-                 t5_gen_config: dict={"max_new_tokens": 64, "num_beams": 1, "do_sample": False},
+                 t5_gen_config: dict={"max_new_tokens": 64, "num_beams": 4, "do_sample": True},
                  use_cuda: bool=True,
                  logging_level=logging.INFO
                 ) -> None:
