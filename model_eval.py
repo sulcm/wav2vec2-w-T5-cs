@@ -66,7 +66,8 @@ def main(test_args) -> None:
             "name": test_args.dataset_name,
             "language": test_args.dataset_config_name,
             "split": test_args.test_split_name
-        }
+        },
+        "t5_gen_config": st6_model.t5_config if test_args.t5_model_name_or_path != "" else {}
     })
     print("\nEvaluation results:\n" + json.dumps(metrics, indent=2))
 
