@@ -1,0 +1,27 @@
+na 131 příkladech došlo ke zvýšení sémantické podobnosti ačkoliv se WER zhoršilo
+
+
+1681:
+W2V2 Transcription (WER = 0.0714): po dešti se kamenná vlažba na ulici leskla jako by to bylo velké zrcadlo
+     T5 Correction (WER = 0.1429): po dešti se kamenná dlažba na ulici leskla jakoby to bylo velké zrcadlo
+                    Target output: po dešti se kamenná dlažba na ulici leskla jako by to bylo velké zrcadlo
+
+2191:
+W2V2 Transcription (WER = 0.4000): až ceu i celkem pohodlné
+     T5 Correction (WER = 0.6000): je to celkem pohodlné
+                    Target output: a jsou i celkem pohodlné
+
+2831:
+W2V2 Transcription (WER = 0.0769): do ímelu jim píšu většinou nějakou poznámku trochu vysvětlující tyto věty ze zadání
+     T5 Correction (WER = 0.1538): do e mailu jim píšu většinou nějakou poznámku trochu vysvětlující tyto věty ze zadání
+                    Target output: do emailů jim píšu většinou nějakou poznámku trochu vysvětlující tyto věty ze zadání
+
+3233:
+W2V2 Transcription (WER = 0.1667): iram nemám přes den moc času
+     T5 Correction (WER = 0.5000): já na to nemám přes den moc času
+                    Target output: jenom nemám přes den moc času
+
+5613:
+W2V2 Transcription (WER = 0.4000): te si nijak nemohu vzpomenout
+     T5 Correction (WER = 0.6000): na to si nijak nemohu vzpomenout
+                    Target output: teď si nějak nemohu vzpomenout

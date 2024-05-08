@@ -2,17 +2,17 @@
     "definitions": {
         "prepositions": ["od", "z", "ze", "do", "bez", "krom", "kromě", "podle", "kolem", "podél", 
                     "okolo", "u", "vedle", "za", "k", "proti", "kvůli", "pro", "před", "mimo", 
-                    "na", "pod", "nad", "mezi", "přes", "o", "po", "v", "ve"],
+                    "na", "pod", "nad", "mezi", "přes", "o", "po", "v", "ve", "se", "s"],
         "conjunctions": ["a", "i", "ani", "nebo", "či", "přímo", "nadto", "jak", "tak", "hned", "jednak",
                         "ale", "avšak", "však", "leč", "nýbrž", "naopak", "jenomže", "jenže", "sice",
                         "vždyť", "neboť", "také", "proto", "protože", "tedy", "buď", "když"],
+        "prefixes": ["s", "z", "vz", "roz", "nej", "před", "po", "vý", "vy", "bez", "se", "ze", "za", "od", "do", "o", "ne"],
         "iy": ["i", "y", "í", "ý"],
         "uu": ["ú", "ů", "u"],
-        "prefixes": ["s", "z", "vz", "roz", "nej", "před", "po", "vý", "vy", "bez", "se", "ze", "za", "od", "do", "o", "ne"],
         "szc": ["s", "z", "š", "ž", "c", "č"],
         "dt": ["d", "t", "ď", "ť"],
         "gk": ["g", "k"],
         "bp": ["b", "p"]
     },
-    "classes": ["added_space", "removed_space", "prepositions", "conjunctions", "prefixes", "iy", "uu", "szc", "dt", "gk", "bp", "other"]
+    "classes": ["space", "prepositions", "conjunctions", "prefixes", "iy", "uu", "szc", "dt", "gk", "bp", "other"]
 }
