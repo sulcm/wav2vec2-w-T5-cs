@@ -1,0 +1,11 @@
+python asr_w_spellchecker.py \
+    --wav2vec2_path="/home/sulcm/models/wav2vec2/wav2vec2-cs-v23" \
+    --t5_path="/home/sulcm/models/t5/t5-spellchecker-cs-v20" \
+    --t5_generation_config="run_scripts/configs/t5/generation_config/t5_test.json" \
+    --data_name_or_path="/home/sulcm/Videos/output.wav" \
+    --audio_column_name="audio" \
+    --split_name="test[:20]" \
+    --use_cuda=True \
+    --return_asr_output=False \
+    --logging_level="INFO" \
+    --batch_size="8"

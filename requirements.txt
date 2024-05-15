@@ -4,7 +4,6 @@ torch
 torchaudio
 librosa
 jiwer
-sacrebleu
 evaluate
 accelerate>=0.28.0
 sentencepiece
